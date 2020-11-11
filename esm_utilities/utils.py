@@ -68,3 +68,4 @@ def logfile_stats(logfile_to_read):
     one_day = datetime.timedelta(1)
     throughput = one_day / df["Compute"][1:].mean()
     print(f"Theoretical Throughput assuming no queueing time: {np.round(throughput, 2)} runs per day")
+    return df
