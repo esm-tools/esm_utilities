@@ -38,17 +38,16 @@ def logfile_stats(logfile_to_read):
             prev_compute = gb.get_group((jobnumber -1, "compute"))
             prev_tidy = gb.get_group((jobnumber -1, "tidy_and_resubmit"))
         if "compute" in jobtype:
-            if "start" in subdf.State and "done" in subdf.State:
-                submit = subdf.Date[subdf.State == "submitted"].values[0].astimezone(None)
-                end = subdf.Date[subdf.State == "done"].values[0].astimezone(None)
-                start = subdf.Date[subdf.State == "start"].values[0].astimezone(None)
-                compute_submit_to_start.append((jobnumber, start - submit))
-                compute_start_to_end.append((jobnumber, end - start))
-                if jobnumber > 1:
-                    queue_time = start - prev_compute.Date[prev_compute.State == "done"].values[0].astimezone(None)
-                else:
-                    queue_time = None
-                queue_time_list.append((jobnumber, queue_time))
+            submit = subdf.Date[subdf.State == "submitted"].values[0].astimezone(None)
+            end = subdf.Date[subdf.State == "done"].values[0].astimezone(None)
+            start = subdf.Date[subdf.State == "start"].values[0].astimezone(None)
+            compute_submit_to_start.append((jobnumber, start - submit))
+            compute_start_to_end.append((jobnumber, end - start))
+            if jobnumber > 1:
+                queue_time = start - prev_compute.Date[prev_compute.State == "done"].values[0].astimezone(None)
+            else:
+                queue_time = None
+            queue_time_list.append((jobnumber, queue_time))
         if "tidy" in jobtype:
             end = subdf.Date[subdf.State == "done"].values[0].astimezone(None)
             start = subdf.Date[subdf.State == "start"].values[0].astimezone(None)
