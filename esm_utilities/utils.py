@@ -26,6 +26,9 @@ def logfile_stats(logfile_to_read):
     # Clean up State
     df["State"] = df.State.str.strip()
 
+    while "done" not in df.iloc[-1]["State"]:
+        df = df.head(-1)
+
     gb = df.groupby(["Job Number", "Jobtype"])
 
     compute_submit_to_start = []
