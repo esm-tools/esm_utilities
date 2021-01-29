@@ -58,6 +58,7 @@ def logfile_stats(logfile_to_read):
 
 
     queue_time_df = pd.DataFrame(queue_time_list, columns=["Job Number", "Queue Time"]).set_index("Job Number").transpose()
+    queue_time_df[1]['Queue Time'] = 0
 
 
     compute_start_to_end_df = pd.DataFrame(compute_start_to_end, columns=["Job Number", "Compute"]).set_index("Job Number").transpose()
@@ -65,10 +66,18 @@ def logfile_stats(logfile_to_read):
     tidy_df = pd.DataFrame(tidy_start_to_end, columns=["Job Number", "Tidy"]).set_index("Job Number").transpose()
     df = pd.concat([queue_time_df, compute_submit_to_start_df, compute_start_to_end_df, tidy_df])
     df = df.transpose()
-    print(df)
-    print(df.mean())
+    print(df.to_markdown())
+    print("\n\n")
+    averages = pd.DataFrame({"Average Job Times": df.mean()})
+    print(averages)
 
     one_day = datetime.timedelta(1)
     throughput = one_day / df["Compute"][1:].mean()
-    print(f"Theoretical Throughput assuming no queueing time: {np.round(throughput, 2)} runs per day")
+    print("Theoretical Throughput assuming no queueing time:")
+    print(f"{np.round(throughput, 2)} runs per day")
+    print(f"{np.round(throughput, 2)*7} runs per week")
+    print(f"{np.round(throughput, 2)*30} runs per month")
+    for num_runs in 10, 100, 1000:
+        print(f"Time for {num_runs} runs: {num_runs * df['Compute'][1:].mean()}")
+    print("This throughput ignores the first year, which is generally slightly longer due to initialization!")
     return df
